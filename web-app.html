@@ -1,0 +1,28 @@
+<link rel="import"
+      href="bower_components/polymer/polymer.html">
+
+<dom-module id="web-app">
+
+  <template>
+    <p>I'm a DOM element. This is my local DOM!</p>
+    <button on-tap="addWidget" widget-type="widget-one">Add Widget ONE</button>
+    <button on-tap="addWidget" widget-type="widget-two">Add Widget TWO</button>
+  </template>
+
+  <script>
+    Polymer({
+      is: "web-app",
+      defaultWidget: "widget-one",
+      addWidget: function(e) {
+        var widgetType = e.target.getAttribute("widget-type") || this.defaultWidget;
+        var widget = document.createElement(widgetType);
+        //self.$.anchor.appendChild(widget);
+        this.appendChild(widget);
+      },
+      ready: function() {
+        console.log("web-app ready!");
+      }
+    });
+  </script>
+
+</dom-module>
