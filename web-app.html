@@ -13,14 +13,50 @@
     Polymer({
       is: "web-app",
       defaultWidget: "widget-one",
+      widgetsLoaded: [],
       addWidget: function(e) {
-        var widgetType = e.target.getAttribute("widget-type") || this.defaultWidget;
-        var widget = document.createElement(widgetType);
-        //self.$.anchor.appendChild(widget);
-        this.appendChild(widget);
+        var self = this;
+        var widgetType, widget;
+
+        if (typeof e == "string") {
+          widgetType = e;
+        } else {
+          widgetType = e.target.getAttribute("widget-type") || this.defaultWidget;
+        }
+
+        widget = document.createElement(widgetType);
+
+        // if widget is loaded already, we just add it
+        if (this.widgetsLoaded.indexOf(widgetType) > -1) {
+          this.appendChild(widget);
+        } else {
+          this.loadWidget(widgetType, function(){
+            self.appendChild(widget);
+          });
+        }
+      },
+      loadWidget: function(widgetType, cb) {
+        var self = this;
+        var elImport = document.createElement("link");
+
+        elImport.rel = "import";
+        elImport.href = "./" + widgetType + ".html";
+        document.head.appendChild(elImport);
+
+        elImport.onload = function() {
+          // widget is loaded, adding to the list
+          self.widgetsLoaded.push(widgetType);
+
+          if (cb && typeof cb == "function") {
+            cb();
+          }
+        }
       },
       ready: function() {
         console.log("web-app ready!");
+
+        // adding widget when page is loaded
+        // this.addWidget(this.defaultWidget);
       }
     });
   </script>
